@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regex Tester</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .cheat-sheet-btn {
+            background: #2ecc71;
+        }
+        
+        .cheat-sheet-btn:hover {
+            background: #27ae60;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .results {
+            margin-top: 30px;
+        }
+        
+        .results h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .match-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .match-info p {
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .highlighted-text {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            min-height: 100px;
+            line-height: 1.6;
+        }
+        
+        .match {
+            background: rgba(52, 152, 219, 0.2);
+            padding: 2px 0;
+            border-radius: 3px;
+        }
+        
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Regex Tester</h1>
+        <p class="description">Test your regular expressions against text. See matches in real-time and debug your patterns.</p>
+        
+        <div class="input-group">
+            <label for="regex">Regular Expression</label>
+            <input type="text" id="regex" placeholder="Enter your regex pattern (e.g., [A-Za-z]+)">
+        </div>
+        
+        <div class="options">
+            <div class="option">
+                <input type="checkbox" id="caseInsensitive">
+                <label for="caseInsensitive">Case insensitive (i)</label>
+            </div>
+            <div class="option">
+                <input type="checkbox" id="global">
+                <label for="global">Global (g)</label>
+            </div>
+            <div class="option">
+                <input type="checkbox" id="multiline">
+                <label for="multiline">Multiline (m)</label>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="testText">Test Text</label>
+            <textarea id="testText" placeholder="Enter text to test your regex against...">The quick brown fox jumps over the lazy dog. 
+Sample text with numbers: 123, 45.6, and 7890.
+Email addresses: test@example.com, john.doe@mail.org</textarea>
+        </div>
+        
+        <div class="buttons">
+            <button id="testBtn">
+                <span>Test Regex</span>
+            </button>
+            <a href="https://regex.netlify.app/cheat-sheet" target="_blank">
+                <button class="cheat-sheet-btn">
+                    <span>Regex Cheat Sheet</span>
+                </button>
+            </a>
+        </div>
+        
+        <div class="error" id="errorMsg"></div>
+        
+        <div class="results">
+            <h2>Results</h2>
+            <div class="match-info">
+                <p id="matchesCount">Matches found: 0</p>
+                <p id="execTime">Execution time: 0ms</p>
+            </div>
+            
+            <label>Text with matches highlighted:</label>
+            <div class="highlighted-text" id="highlightedText"></div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Created with JavaScript | Regex Tester Tool</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const regexInput = document.getElementById('regex');
+            const testText = document.getElementById('testText');
+            const caseInsensitive = document.getElementById('caseInsensitive');
+            const global = document.getElementById('global');
+            const multiline = document.getElementById('multiline');
+            const testBtn = document.getElementById('testBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const matchesCount = document.getElementById('matchesCount');
+            const execTime = document.getElementById('execTime');
+            const highlightedText = document.getElementById('highlightedText');
+            
+            // Set a sample regex pattern to start with
+            regexInput.value = '\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b';
+            
+            function testRegex() {
+                // Reset error and results
+                errorMsg.style.display = 'none';
+                highlightedText.innerHTML = '';
+                matchesCount.textContent = 'Matches found: 0';
+                execTime.textContent = 'Execution time: 0ms';
+                
+                const pattern = regexInput.value;
+                if (!pattern) {
+                    showError('Please enter a regular expression');
+                    return;
+                }
+                
+                const text = testText.value;
+                if (!text) {
+                    showError('Please enter some text to test');
+                    return;
+                }
+                
+                // Build flags string
+                let flags = '';
+                if (caseInsensitive.checked) flags += 'i';
+                if (global.checked) flags += 'g';
+                if (multiline.checked) flags += 'm';
+                
+                let regex;
+                try {
+                    regex = new RegExp(pattern, flags);
+                } catch (e) {
+                    showError('Invalid regular expression: ' + e.message);
+                    return;
+                }
+                
+                // Test the regex and measure execution time
+                const startTime = performance.now();
+                const matches = text.match(regex);
+                const endTime = performance.now();
+                
+                // Display results
+                const matchCount = matches ? matches.length : 0;
+                matchesCount.textContent = `Matches found: ${matchCount}`;
+                execTime.textContent = `Execution time: ${(endTime - startTime).toFixed(2)}ms`;
+                
+                // Highlight matches in the text
+                if (matchCount > 0) {
+                    // Use global flag for replacement even if user didn't set it
+                    const highlightRegex = new RegExp(pattern, flags + 'g');
+                    const highlighted = text.replace(highlightRegex, '<span class="match">$&</span>');
+                    highlightedText.innerHTML = highlighted;
+                } else {
+                    highlightedText.textContent = text;
+                }
+            }
+            
+            function showError(message) {
+                errorMsg.textContent = message;
+                errorMsg.style.display = 'block';
+            }
+            
+            testBtn.addEventListener('click', testRegex);
+            
+            // Test regex on Enter key in regex input
+            regexInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    testRegex();
+                }
+            });
+            
+            // Initial test with sample data
+            testRegex();
+        });
+    </script>
+</body>
+</html>
